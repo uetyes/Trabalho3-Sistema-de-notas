@@ -1,0 +1,91 @@
+package org.teiacoltec.poo.tp3;
+
+import java.io.Serializable;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.*;
+import org.teiacoltec.poo.tp3.Excecoes.CredenciaisInvalidasException;
+
+public abstract class Pessoa implements Serializable {
+
+    private String CPF;
+    private String nome;
+    private Date nascimento;
+    private String email;
+    private String endereco;
+    private String login;
+    private String senha;
+
+    private byte[] senhaCriptografada;
+    private PublicKey chavePublica;
+    private PrivateKey chavePrivada;
+
+
+    public Pessoa(String CPF, String nome, Date nascimento, String email, String endereco) throws Exception{
+        this.CPF = CPF;
+        this.nome = nome;
+        this.nascimento = nascimento;
+        this.email = email;
+        this.endereco = endereco;
+
+
+        // Gerar chaves automaticamente
+        KeyPair chave = Cripto.gerarParDeChaves();
+        this.chavePublica = chave.getPublic();
+        this.chavePrivada = chave.getPrivate();
+    }
+
+    public void setSenha(String senha) throws Exception{
+        this.senhaCriptografada = Cripto.encriptar(senha, chavePublica);
+    }
+
+    public boolean validarSenha(String senha) throws Exception{
+        String senhaOriginal = Cripto.descriptar(senhaCriptografada, chavePrivada);
+        if(senha.equals(senhaOriginal)){
+            return true;
+        }
+        return false;
+    }
+
+
+   
+
+
+    public void setCPF(String cpf){this.CPF = cpf;}
+
+    public void setLogin(String login){this.login = login;}
+
+    public void setNome(String nome){this.nome = nome;}
+
+    public void setEmail(String email){this.email = email;}
+
+    public void setEndereco(String endereco){this.endereco = endereco;}
+
+    public void setNascimento(Date nascimento){this.nascimento = nascimento;}
+
+    public Date getNascimento(){
+        return this.nascimento;
+    }
+
+     public String getNome(){
+        return this.nome;
+    }
+
+    public String getEmail(){
+        return this.email;
+    }
+    
+    public String getCPF(){
+        return this.CPF;
+    }
+
+    public String getEndereco(){
+        return this.endereco;
+    }
+
+    public String getLogin(){
+        return this.login;
+    } 
+}
+

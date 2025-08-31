@@ -1,0 +1,38 @@
+package org.teiacoltec.poo.tp3;
+
+import org.teiacoltec.poo.tp3.Excecoes.CredenciaisInvalidasException;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Autenticacao {
+
+
+
+    private static final List<Pessoa> listaUsuariosLogados = new ArrayList<>();
+
+    public static Pessoa autenticar(String login, String senha, List<Pessoa> listaDeUsuarios)
+            throws Exception, CredenciaisInvalidasException {
+
+        return listaDeUsuarios.stream()
+                .filter(pessoa -> pessoa.getLogin().equals(login))
+                .findFirst()
+                .map(pessoa -> {
+                    try {
+                        if (pessoa.validarSenha(senha)) {
+                            listaUsuariosLogados.add(pessoa);
+                            return pessoa;
+                        } else {
+                            throw new RuntimeException(new CredenciaisInvalidasException());
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .orElseThrow(CredenciaisInvalidasException::new);
+    }
+
+    public void logout(Pessoa usuario){
+        listaUsuariosLogados.remove(usuario);
+    }
+}
